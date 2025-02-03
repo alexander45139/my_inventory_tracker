@@ -12,6 +12,7 @@ declare(strict_types=1);
  * @link      https://cakephp.org CakePHP(tm) Project
  * @since     3.0.0
  * @license   https://opensource.org/licenses/mit-license.php MIT License
+ * @var App\Controller\ProductsController $productsController
  */
 namespace App\View;
 
@@ -38,4 +39,10 @@ class AppView extends View
     public function initialize(): void
     {
     }
+
+    public function displayProducts(): void
+    {
+        $productsController->products;
+    }
+
 }

@@ -1,5 +1,9 @@
 <?php
-// Custom type that describes a Product object's stock status
+namespace App\Model\Entity;
+
+/**
+ * Custom type that describes a Product object's stock status
+ */ 
 enum Status
 {
     case InStock;
@@ -9,12 +13,12 @@ enum Status
 
 class Product
 {
-    private $id;
-    private $name;
-    private $quantity;
-    private $price;
-    private $status;
-    private $isDeleted;
+    private int $id;
+    private string $name;
+    private int $quantity;
+    private float $price;
+    private Status $status;
+    private bool $isDeleted;
 
     public function __construct($id, $name, $quantity, $price, $status)
     {
