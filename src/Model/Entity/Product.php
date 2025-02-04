@@ -1,14 +1,16 @@
 <?php
 namespace App\Model\Entity;
 
+use Cake\I18n\DateTime;
+
 /**
  * Custom type that describes a Product object's stock status
  */ 
-enum Status
+enum Status: string
 {
-    case InStock;
-    case LowStock;
-    case OutOfStock;
+    case InStock = "In Stock";
+    case LowStock = "Low Stock";
+    case OutOfStock = "Out of Stock";
 }
 
 class Product
@@ -19,6 +21,7 @@ class Product
     private float $price;
     private Status $status;
     private bool $isDeleted;
+    private DateTime $lastUpdated;
 
     public function __construct($id, $name, $quantity, $price, $status)
     {
@@ -28,6 +31,8 @@ class Product
         $this->setPrice($price);
         $this->setStatus($status);
         $this->setIsDeleted(false);
+        
+        $this->lastUpdated = new DateTime()::now();
     }
 
     public function setId($id)
@@ -97,7 +102,7 @@ class Product
 
     public function getStatus()
     {
-        return $this->status;
+        return $this->status->value;
     }
 
     public function setIsDeleted($isDeleted)

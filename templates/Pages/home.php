@@ -51,6 +51,18 @@ $this->disableAutoLayout();
                     <div class="column">
                         <?= h($pr->getName()) ?>
                     </div>
+                    <div class="column">
+                        <?= h($pr->getQuantity()) ?>
+                    </div>
+                    <div class="column">
+                        <?= h($pr->getPrice()) ?>
+                    </div>
+                    <div class="column">
+                        <?= h($pr->getStatus()) ?>
+                    </div>
+                    <div class="column">
+                        <?= h($pr->getLastUpdated()) ?>
+                    </div>
                 </div>
                 <?php endforeach ?>
                 <div class="row">
