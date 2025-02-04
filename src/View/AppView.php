@@ -40,9 +40,4 @@ class AppView extends View
     {
     }
 
-    public function displayProducts(): void
-    {
-        $productsController->products;
-    }
-
 }
