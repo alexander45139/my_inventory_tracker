@@ -27,7 +27,7 @@ class ProductsController extends PagesController
 
     public function display(string ...$path): ?Response
     {
-        $this->set("products", $this->products);
+        $this->set("products", array_filter($this->products, fn($pr) => $pr->getIsDeleted() === false));
         return parent::display(...$path);
     }
     
@@ -39,11 +39,11 @@ class ProductsController extends PagesController
      * @param float $price
      * @param Status $status
      */
-    public function add($name, $quantity, $price, $status)
+    public function add(string $name, int $quantity, float $price, Status $status)
     {
         $product = new Product($name, $quantity, $price, $status);
         array_push($products, $product);
-        $this->set("products", $this->products);
+        return $this->display();
     }
 
     /**
@@ -53,7 +53,7 @@ class ProductsController extends PagesController
      * @param mixed $newValue
      * @return void
      */
-    public function edit($id, $productProperty, $newValue)
+    public function edit(int $id, string $productProperty, string $newValue)
     {
         $productPropertyWithFirstCapital = ucfirst($productProperty);  // capitalise first letter
         $oldProduct = $this->getProductById($id);
@@ -62,9 +62,8 @@ class ProductsController extends PagesController
         
         if (!$isProductChanged) {
             $newProduct->setLastUpdatedAsNow();
-
             $this->products[array_search($oldProduct, $this->products)] = $newProduct;
-            $this->set("products", $this->products);
+            return $this->display();
         } else {
             // code to return an error message
         }
@@ -76,9 +75,9 @@ class ProductsController extends PagesController
      * @param mixed $id
      * @return void
      */
-    public function delete($id): void
+    public function delete(int $id)
     {
-        $this->edit($id, "isDeleted", true);
+        return $this->edit($id, "isDeleted", true);
     }
 
     /**
@@ -86,7 +85,7 @@ class ProductsController extends PagesController
      * @param int $id
      * @return \App\Model\Entity\Product
      */
-    private function getProductById($id): Product
+    private function getProductById(int $id): Product
     {
         return array_filter($this->products, fn($p) => $p->id === $id)[0];
     }

@@ -40,4 +40,9 @@ class AppView extends View
     {
     }
 
+    public function renderLink(string $label, string $productsMethod, $productId): string
+    {
+        return $this->Html->link('Delete', ['controller' => 'Products', 'action' => 'delete', $productId]);
+    }
+
 }
