@@ -60,12 +60,7 @@ return function (RouteBuilder $routes): void {
         /*
          * ...and connect the rest of 'Pages' controller's URLs.
          */
-        $builder->connect('/pages/*', 'Pages::display');
-
-        /*
-         * ...and also connect the Products controller to the '/pages/home' URL.
-         */
-        $builder->connect('/pages/home', 'Products::display');
+        $builder->connect('/pages/*', 'Products::display');
 
         /*
          * Connect catchall routes for all controllers.

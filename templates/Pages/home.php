@@ -25,7 +25,7 @@ $this->disableAutoLayout();
     <?= $this->Html->charset() ?>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>
-        Welcome to CakePHP's Inventory Tracker
+        Inventory Tracker: Welcome to CakePHP's Inventory Tracker
     </title>
     <?= $this->Html->meta('icon') ?>
 
@@ -45,7 +45,34 @@ $this->disableAutoLayout();
     </header>
     <main class="main">
         <div class="container">
+            <div class="text-center">
+                <button>Add Product</button>
+            </div>
+            <input id="productSearchBar" type="search" placeholder="Search for Product" />
             <div class="content">
+                <div class="row">
+                    <strong class="column">
+                        Name
+                    </strong>
+                    <strong class="column">
+                        Quantity
+                    </strong>
+                    <strong class="column">
+                        Price
+                    </strong>
+                    <strong class="column">
+                        Status
+                    </strong>
+                    <strong class="column">
+                        Last Updated
+                    </strong>
+                    <strong class="column">
+                        Edit Product
+                    </strong>
+                    <strong class="column">
+                        Delete Product
+                    </strong>
+                </div>
                 <?php foreach ($products as $pr): ?>
                 <div class="row">
                     <div class="column">
@@ -55,7 +82,7 @@ $this->disableAutoLayout();
                         <?= h($pr->getQuantity()) ?>
                     </div>
                     <div class="column">
-                        <?= h($pr->getPrice()) ?>
+                        £<?= h($pr->getPrice()) ?>
                     </div>
                     <div class="column">
                         <?= h($pr->getStatus()) ?>
@@ -63,13 +90,16 @@ $this->disableAutoLayout();
                     <div class="column">
                         <?= h($pr->getLastUpdated()) ?>
                     </div>
-                </div>
-                <?php endforeach ?>
-                <div class="row">
                     <div class="column">
-                        
+                        <a href="/pages/app">
+                            <button>Edit</button>
+                        </a>
+                    </div>
+                    <div class="column">
+                        <button>Delete</button>
                     </div>
                 </div>
+                <?php endforeach ?>
             </div>
         </div>
     </main>

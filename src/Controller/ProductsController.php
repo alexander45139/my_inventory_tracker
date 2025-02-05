@@ -20,8 +20,8 @@ class ProductsController extends PagesController
 
         // Because there's no database, I have created some products here
         $this->products = [
-            new Product("1", "Torch", 3, 7.45, Status::InStock),
-            new Product("2", "Earphones", 4, 9.99, Status::LowStock)
+            new Product("Torch", 3, 7.45, Status::InStock),
+            new Product("Earphones", 4, 9.99, Status::LowStock)
         ];
     }
 
@@ -39,24 +39,59 @@ class ProductsController extends PagesController
      * @param float $price
      * @param Status $status
      */
-    public function add($id, $name, $quantity, $price, $status)
+    public function add($name, $quantity, $price, $status)
     {
-        if (array_search($id, array_column($this->products, "id")) !== null) {
-            $product = new Product($id, $name, $quantity, $price, $status);
-            array_push($products, $product);
-            $this->set("products", $this->products);
-        }
+        $product = new Product($name, $quantity, $price, $status);
+        array_push($products, $product);
+        $this->set("products", $this->products);
     }
 
-    /* public function edit($id, Request $request)
+    /**
+     * Changes a property's value of a Product object
+     * @param mixed $id
+     * @param mixed $productProperty
+     * @param mixed $newValue
+     * @return void
+     */
+    public function edit($id, $productProperty, $newValue)
     {
-        $product = Product::find($id);
-        return view("", compact("product"));
-    } */
+        $productPropertyWithFirstCapital = ucfirst($productProperty);  // capitalise first letter
+        $oldProduct = $this->getProductById($id);
+        $newProduct = $oldProduct;
+        $isProductChanged = $newProduct->{"set$productPropertyWithFirstCapital"}($newValue);
+        
+        if (!$isProductChanged) {
+            $newProduct->setLastUpdatedAsNow();
 
-    /* public function delete($id)
+            $this->products[array_search($oldProduct, $this->products)] = $newProduct;
+            $this->set("products", $this->products);
+        } else {
+            // code to return an error message
+        }
+        
+    }
+
+    /**
+     * Marks a Product object as deleted
+     * @param mixed $id
+     * @return void
+     */
+    public function delete($id): void
     {
-        $product = $this->products->get($id);
-        $product->setIsDeleted(true);
-    } */
+        $this->edit($id, "isDeleted", true);
+    }
+
+    /**
+     * Gets a Product by the provided ID
+     * @param int $id
+     * @return \App\Model\Entity\Product
+     */
+    private function getProductById($id): Product
+    {
+        return array_filter($this->products, fn($p) => $p->id === $id)[0];
+    }
+
+    private function validateProduct($id) {
+        
+    }
 }
