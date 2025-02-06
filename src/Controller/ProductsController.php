@@ -12,22 +12,30 @@ use Cake\Http\Response;
  */
 class ProductsController extends PagesController
 {
-    public array $products;
-
     public function initialize(): void
     {
         parent::initialize();
 
-        // Because there's no database, I have created some products here
-        $this->products = [
-            new Product("Torch", 3, 7.45, Status::InStock),
-            new Product("Earphones", 4, 9.99, Status::LowStock)
-        ];
+        // session will store the Product objects while the browser is open
+        $session = $this->request->getSession();
+
+        // if products aren't stored in the session
+        if (!$session->check("products")) {
+            // Because there's no database, I have created some products here
+            $products = [
+                new Product("Torch", 3, 7.45, Status::InStock),
+                new Product("Earphones", 4, 9.99, Status::LowStock)
+            ];
+            $session->write("products", $products);
+        } else {
+            $products = $session->read("products");
+        }
+        
+        $this->set("products", array_filter($products, fn($pr) => $pr->getIsDeleted() === false));
     }
 
     public function display(string ...$path): ?Response
     {
-        $this->set("products", array_filter($this->products, fn($pr) => $pr->getIsDeleted() === false));
         return parent::display(...$path);
     }
     
@@ -43,7 +51,6 @@ class ProductsController extends PagesController
     {
         $product = new Product($name, $quantity, $price, $status);
         array_push($products, $product);
-        return $this->display();
     }
 
     /**
@@ -53,9 +60,9 @@ class ProductsController extends PagesController
      * @param mixed $newValue
      * @return void
      */
-    public function edit(int $id, string $productProperty, string $newValue)
+    public function edit(int $id, string $productProperty, mixed $newValue)
     {
-        $productPropertyWithFirstCapital = ucfirst($productProperty);  // capitalise first letter
+        /* $productPropertyWithFirstCapital = ucfirst($productProperty);  // capitalise first letter
         $oldProduct = $this->getProductById($id);
         $newProduct = $oldProduct;
         $isProductChanged = $newProduct->{"set$productPropertyWithFirstCapital"}($newValue);
@@ -63,10 +70,10 @@ class ProductsController extends PagesController
         if (!$isProductChanged) {
             $newProduct->setLastUpdatedAsNow();
             $this->products[array_search($oldProduct, $this->products)] = $newProduct;
-            return $this->display();
+            
         } else {
             // code to return an error message
-        }
+        } */
         
     }
 
@@ -77,7 +84,30 @@ class ProductsController extends PagesController
      */
     public function delete(int $id)
     {
-        return $this->edit($id, "isDeleted", true);
+        $oldProduct = $this->getProductById($id);
+        $newProduct = $oldProduct;
+
+        $newProduct->setIsDeleted(true);
+        $newProduct->setLastUpdatedAsNow();
+
+        $allProducts = $this->getProductsFromSession();
+        $allProducts[
+            array_search($oldProduct, $this->getProductsFromSession())
+        ] = $newProduct;
+        $this->setProductsFromSession($allProducts);
+    }
+
+    private function getProductsFromSession(): array
+    {
+        $session = $this->request->getSession();
+        return $session->read("products");
+    }
+
+    private function setProductsFromSession($products)
+    {
+        $session = $this->request->getSession();
+        $session->write("products", $products);
+        $this->redirect(['action' => 'display']);
     }
 
     /**
@@ -87,7 +117,7 @@ class ProductsController extends PagesController
      */
     private function getProductById(int $id): Product
     {
-        return array_filter($this->products, fn($p) => $p->id === $id)[0];
+        return $this->getProductsFromSession()[$id];
     }
 
     private function validateProduct($id) {

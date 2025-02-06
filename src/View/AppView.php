@@ -40,9 +40,19 @@ class AppView extends View
     {
     }
 
-    public function renderLink(string $label, string $productsMethod, $productId): string
+    public function renderLink(string $title, string $productsMethod, $productId): string
     {
-        return $this->Html->link('Delete', ['controller' => 'Products', 'action' => 'delete', $productId]);
+        return $this->Html->link($title, [
+            'controller' => 'Products',
+            'action' => $productsMethod, $productId
+        ]);
     }
-
+    
+    public function renderSearchBar()
+    {
+        return $this->Html->tag('input', '', [
+            'type' => 'search',
+            'placeholder' => 'Search for Product',
+        ]);
+    }
 }

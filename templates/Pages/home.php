@@ -48,7 +48,7 @@ $this->disableAutoLayout();
             <div class="text-center">
                 <button onclick="">Add Product</button>
             </div>
-            <input id="productSearchBar" type="search" placeholder="Search for Product" />
+            <?= $this->renderSearchBar() ?>
             <div class="content">
                 <div class="row">
                     <strong class="column">
@@ -91,7 +91,7 @@ $this->disableAutoLayout();
                         <?= h($pr->getLastUpdated()) ?>
                     </div>
                     <div class="column">
-                        <button>Edit</button>
+                        <a href="/pages/add">Add</a>
                     </div>
                     <div class="column">
                         <?= $this->renderLink('Delete', 'delete', $pr->getId()) ?>
