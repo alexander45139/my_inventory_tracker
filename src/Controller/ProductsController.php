@@ -5,33 +5,21 @@ namespace App\Controller;
 
 use App\Model\Entity\Product;
 use App\Model\Entity\Status;
-use Cake\Http\Response;
+use Cake\Datasource\ConnectionManager;#
+use Cake\Log\Log;
 
 /**
  * The ProductsController class changes the Product objects
  */
 class ProductsController extends PagesController
 {
+    public array $products;
+
     public function initialize(): void
     {
         parent::initialize();
 
-        // session will store the Product objects while the browser is open
-        $session = $this->request->getSession();
-
-        // if products aren't stored in the session
-        if (!$session->check("products")) {
-            // Because there's no database, I have created some products here
-            $products = [
-                new Product("Torch", 3, 7.45, Status::InStock),
-                new Product("Earphones", 4, 9.99, Status::LowStock)
-            ];
-            $session->write("products", $products);
-        } else {
-            $products = $session->read("products");
-        }
-        
-        $this->set("products", array_filter($products, fn($pr) => $pr->getIsDeleted() === false));
+        $this->fetchAllProducts();
     }
 
     /**
@@ -53,8 +41,8 @@ class ProductsController extends PagesController
      */
     public function add(string $name, int $quantity, float $price, Status $status)
     {
-        $product = new Product($name, $quantity, $price, $status);
-        array_push($products, $product);
+        $product = new Product($name, $quantity, $price, $status, false, new DateTime());
+        array_push($this->products, $product);
     }
 
     /**
@@ -132,5 +120,33 @@ class ProductsController extends PagesController
     private function getProductById(int $id): Product
     {
         return $this->getProductsFromSession()[$id];
+    }
+
+    private function fetchAllProducts()
+    {
+        $results = $this->query('SELECT * FROM products WHERE IsDeleted = False');
+
+        $this->products = [];
+
+        foreach ($results as $result) {
+            array_push($this->products, new Product(
+                $result['Name'],
+                $result['Quantity'],
+                $result['Price'],
+                $result['Status'],
+                $result['IsDeleted'],
+                $result['LastUpdated']
+            ));
+        }
+        
+        $this->set('products', $this->products);
+    }
+
+    private function query(string $query) {
+        $connection = ConnectionManager::get('default');
+
+        $results = $connection->execute($query)->fetchAll('assoc');
+
+        return $results;
     }
 }

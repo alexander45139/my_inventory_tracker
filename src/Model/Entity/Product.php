@@ -29,15 +29,15 @@ class Product
     private bool $isDeleted;
     private DateTime $lastUpdated;
 
-    public function __construct($name, $quantity, $price, $status)
+    public function __construct($name, $quantity, $price, $status, $isDeleted, $lastUpdated)
     {
         $this->id = Product::$idCount;
         $this->setName($name);
         $this->setQuantity($quantity);
         $this->setPrice($price);
         $this->setStatus($status);
-        $this->setIsDeleted(false);
-        $this->setLastUpdatedAsNow();
+        $this->setIsDeleted($isDeleted);
+        $this->setLastUpdated($lastUpdated);
         
         Product::$idCount++;
     }
@@ -99,7 +99,7 @@ class Product
 
     public function setStatus($status)
     {
-        $this->status = $status;
+        $this->status = Status::from($status);
     }
 
     public function getStatus()
@@ -117,9 +117,9 @@ class Product
         return $this->isDeleted;
     }
 
-    public function setLastUpdatedAsNow()
+    public function setLastUpdated($lastUpdated)
     {
-        $this->lastUpdated = new DateTime();
+        $this->lastUpdated = new DateTime($lastUpdated);
     }
 
     public function getLastUpdated() 
