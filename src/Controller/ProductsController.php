@@ -34,9 +34,13 @@ class ProductsController extends PagesController
         $this->set("products", array_filter($products, fn($pr) => $pr->getIsDeleted() === false));
     }
 
-    public function display(string ...$path): ?Response
-    {
-        return parent::display(...$path);
+    /**
+     * Finds the products that contain the user's provided keywords
+     * @param string $keywords
+     * @return void
+     */
+    public function search(string $keywords) {
+        //
     }
     
     /**
@@ -97,12 +101,22 @@ class ProductsController extends PagesController
         $this->setProductsFromSession($allProducts);
     }
 
-    private function getProductsFromSession(): array
+    /**
+     * Gets the Product objects array stored in the session
+     * @return mixed|null
+     */
+    private function getProductsFromSession()
     {
         $session = $this->request->getSession();
         return $session->read("products");
+        
     }
 
+    /**
+     * Sets the Product objects array stored in the session
+     * @param mixed $products
+     * @return void
+     */
     private function setProductsFromSession($products)
     {
         $session = $this->request->getSession();
@@ -118,9 +132,5 @@ class ProductsController extends PagesController
     private function getProductById(int $id): Product
     {
         return $this->getProductsFromSession()[$id];
-    }
-
-    private function validateProduct($id) {
-        
     }
 }

@@ -30,6 +30,7 @@ $this->disableAutoLayout();
     <?= $this->Html->meta('icon') ?>
 
     <?= $this->Html->css(['normalize.min', 'milligram.min', 'fonts', 'cake', 'home']) ?>
+    <?= $this->Html->script('home') ?>
 
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
@@ -46,9 +47,18 @@ $this->disableAutoLayout();
     <main class="main">
         <div class="container">
             <div class="text-center">
-                <button onclick="">Add Product</button>
+                <button onclick="openAddPopup()">Add Product</button>
             </div>
-            <?= $this->renderSearchBar() ?>
+            <div id="add-popup" class="add-popup-window">
+                Hello
+            </div>
+            <?= $this->Form->create(null, ['url' => ['action' => 'search']]) ?>
+                <?= $this->Form->control('', [
+                    'type' => 'search',
+                    'placeholder' => 'Search for Product',
+                ]); ?>
+                <?= $this->Form->button('Search') ?>
+            <?= $this->Form->end() ?>
             <div class="content">
                 <div class="row">
                     <strong class="column">
@@ -91,10 +101,12 @@ $this->disableAutoLayout();
                         <?= h($pr->getLastUpdated()) ?>
                     </div>
                     <div class="column">
-                        <a href="/pages/add">Add</a>
+                        <button onChange="openEditPopup()">Edit</button>
                     </div>
                     <div class="column">
-                        <?= $this->renderLink('Delete', 'delete', $pr->getId()) ?>
+                        <?= $this->Html->link('Delete', [
+                            'action' => 'delete', $pr->getId()
+                        ]) ?>
                     </div>
                 </div>
                 <?php endforeach ?>
