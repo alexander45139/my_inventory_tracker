@@ -23,11 +23,6 @@ class ProductsController extends PagesController
         $this->set('products', $productsToDisplay);
     }
 
-    public function display(string ...$path): ?Response
-    {
-        return parent::display(...$path);
-    }
-
     /**
      * Finds the products that contain the user's provided keywords
      * @param string $searchKeywords
@@ -43,8 +38,6 @@ class ProductsController extends PagesController
         $this->set('searchKeywords', $searchKeywords);
         
         $this->render('/pages/home');
-
-        
     }
     
     /**
@@ -93,7 +86,6 @@ class ProductsController extends PagesController
         } else {
             // code to return an error message
         } */
-        
     }
 
     /**

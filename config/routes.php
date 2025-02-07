@@ -51,16 +51,16 @@ return function (RouteBuilder $routes): void {
 
     $routes->scope('/', function (RouteBuilder $builder): void {
         /*
-         * Here, we are connecting '/' (base path) to a controller called 'Pages',
+         * Here, we are connecting '/' (base path) to a controller called 'Products',
          * its action called 'display', and we pass a param to select the view file
-         * to use (in this case, templates/Pages/home.php)...
+         * to use (in this case, templates/products/home.php)...
          */
-        $builder->connect('/', ['controller' => 'Products', 'action' => 'display', '/pages/home']);
+        $builder->connect('/', ['controller' => 'Products', 'action' => 'display', '/products/home']);
 
         /*
-         * ...and connect the rest of 'Pages' controller's URLs.
+         * ...and connect the rest of 'Products' controller's URLs.
          */
-        $builder->connect('/pages/home', 'Products::display');
+        $builder->connect('/products/home', 'Products::display');
 
         /*
          * Connect catchall routes for all controllers.
