@@ -40,6 +40,7 @@ class ProductsController extends PagesController
         $productsToDisplay = $this->getProducts($searchKeywords);
 
         $this->set('products', $productsToDisplay);
+        $this->set('searchKeywords', $searchKeywords);
         
         $this->render('/pages/home');
 

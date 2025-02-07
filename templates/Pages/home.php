@@ -48,7 +48,22 @@ $this->disableAutoLayout();
                 <button onclick="openAddPopup()">Add Product</button>
             </div>
             <div id="add-popup" class="add-popup-window">
-                Hello
+                <h3>Add a Product</h3>
+
+                <label>Name</label>
+                <input type="text" />
+
+                <label>Quantity</label>
+                <input type="number" />
+
+                <label>Price</label>
+                <input type="number" />
+                
+                <label>Status</label>
+                <select>
+                    <option value="ts"></option>
+                </select>
+                
             </div>
             <?= $this->Form->create(null, ['type' => 'get', 'url' => ['action' => 'search']]) ?>
                 <?= $this->Form->control('search', [
@@ -58,6 +73,9 @@ $this->disableAutoLayout();
                 ]); ?>
                 <?= $this->Form->button('Search') ?>
             <?= $this->Form->end() ?>
+            <?php if (isset($searchKeywords)): ?>
+                <h2>Search results for '<?= $searchKeywords ?>'</h2>
+            <?php endif ?>
             <div class="content">
                 <div class="row">
                     <strong class="column">
