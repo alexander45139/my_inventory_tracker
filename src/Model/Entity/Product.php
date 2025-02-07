@@ -18,9 +18,6 @@ enum Status: string
  */
 class Product
 {
-    // static variable keeps count of the next unique ID to use when a new object is created
-    static private int $idCount = 0;
-
     private int $id;
     private string $name;
     private int $quantity;
@@ -29,17 +26,15 @@ class Product
     private bool $isDeleted;
     private DateTime $lastUpdated;
 
-    public function __construct($name, $quantity, $price, $status, $isDeleted, $lastUpdated)
+    public function __construct($id, $name, $quantity, $price, $status, $isDeleted, $lastUpdated)
     {
-        $this->id = Product::$idCount;
+        $this->id = $id;
         $this->setName($name);
         $this->setQuantity($quantity);
-        $this->setPrice($price);
+        $this->setPrice(price: $price);
         $this->setStatus($status);
         $this->setIsDeleted($isDeleted);
         $this->setLastUpdated($lastUpdated);
-        
-        Product::$idCount++;
     }
 
     public function getId()
@@ -54,10 +49,7 @@ class Product
         if ($length >= 3 && $length <= 50)
         {
             $this->name = $name;
-            return true;
         }
-
-        return false;
     }
 
     public function getName()
@@ -70,10 +62,7 @@ class Product
         if ($quantity >= 0 && $quantity <= 1000)
         {
             $this->quantity = (int) $quantity;
-            return true;
         }
-
-        return false;
     }
 
     public function getQuantity()
@@ -86,10 +75,7 @@ class Product
         if ($price > 0 && $price <= 10000)
         {
             $this->price = (float) $price;
-            return true;
         }
-        
-        return false;
     }
 
     public function getPrice()

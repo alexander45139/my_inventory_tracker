@@ -6,20 +6,28 @@ namespace App\Controller;
 use App\Model\Entity\Product;
 use App\Model\Entity\Status;
 use Cake\Datasource\ConnectionManager;#
-use Cake\Log\Log;
+use Cake\I18n\DateTime;
+use Cake\Http\Response;
 
 /**
  * The ProductsController class changes the Product objects
  */
 class ProductsController extends PagesController
 {
-    public array $products;
-
     public function initialize(): void
     {
         parent::initialize();
+    }
 
-        $this->fetchAllProducts();
+    public function display(string ...$path): ?Response
+    {
+        $searchQuery = $this->request->getQuery('search');
+
+        $productsToDisplay = $this->getProducts($searchQuery);
+
+        $this->set('products', $productsToDisplay);
+
+        return parent::display(...$path);
     }
 
     /**
@@ -27,8 +35,11 @@ class ProductsController extends PagesController
      * @param string $keywords
      * @return void
      */
-    public function search(string $keywords) {
-        //
+    public function search()
+    {
+        $keywords = $this->request->getQuery('search');
+
+        $this->redirect(['action' => 'display', '?' => ['search' => $keywords]]);
     }
     
     /**
@@ -41,8 +52,19 @@ class ProductsController extends PagesController
      */
     public function add(string $name, int $quantity, float $price, Status $status)
     {
-        $product = new Product($name, $quantity, $price, $status, false, new DateTime());
-        array_push($this->products, $product);
+        $product = new Product(
+            $this->getNextProductId(), 
+            $name, 
+            $quantity, 
+            $price, 
+            $status, 
+            false, 
+            new DateTime()
+        );
+
+        // validate Product before adding it to db
+
+        $this->redirect(['action' => 'display']);
     }
 
     /**
@@ -76,39 +98,12 @@ class ProductsController extends PagesController
      */
     public function delete(int $id)
     {
-        $oldProduct = $this->getProductById($id);
-        $newProduct = $oldProduct;
+        $this->query(
+            "UPDATE products
+                SET IsDeleted = True
+            WHERE ID = $id"
+        );
 
-        $newProduct->setIsDeleted(true);
-        $newProduct->setLastUpdatedAsNow();
-
-        $allProducts = $this->getProductsFromSession();
-        $allProducts[
-            array_search($oldProduct, $this->getProductsFromSession())
-        ] = $newProduct;
-        $this->setProductsFromSession($allProducts);
-    }
-
-    /**
-     * Gets the Product objects array stored in the session
-     * @return mixed|null
-     */
-    private function getProductsFromSession()
-    {
-        $session = $this->request->getSession();
-        return $session->read("products");
-        
-    }
-
-    /**
-     * Sets the Product objects array stored in the session
-     * @param mixed $products
-     * @return void
-     */
-    private function setProductsFromSession($products)
-    {
-        $session = $this->request->getSession();
-        $session->write("products", $products);
         $this->redirect(['action' => 'display']);
     }
 
@@ -119,30 +114,62 @@ class ProductsController extends PagesController
      */
     private function getProductById(int $id): Product
     {
-        return $this->getProductsFromSession()[$id];
+        $result = $this->query(
+            "SELECT TOP 1 *
+            FROM products
+            WHERE ID = $id"
+        );
+
+        return $this->createProductFromSQLResult($result);
+
     }
 
-    private function fetchAllProducts()
+    private function getProducts($name = null)
     {
-        $results = $this->query('SELECT * FROM products WHERE IsDeleted = False');
+        $filterName = $name ? 'AND Name LIKE $name' : '';
 
-        $this->products = [];
+        $results = $this->query(
+            "SELECT *
+            FROM products
+            WHERE IsDeleted = False"
+            . $filterName
+        );
+
+        $products = [];
 
         foreach ($results as $result) {
-            array_push($this->products, new Product(
-                $result['Name'],
-                $result['Quantity'],
-                $result['Price'],
-                $result['Status'],
-                $result['IsDeleted'],
-                $result['LastUpdated']
-            ));
+            array_push($products, $this->createProductFromSQLResult($result));
         }
-        
-        $this->set('products', $this->products);
+
+        return $products;
     }
 
-    private function query(string $query) {
+    private function getNextProductId()
+    {
+        $maxProductIdResult = $this->query(
+            "SELECT TOP 1 ID
+            FROM products
+            ORDER BY ID DESC"
+        );
+
+        return $maxProductIdResult == [] ? 1 : $maxProductIdResult['ID'] + 1;
+    }
+
+    private function createProductFromSQLResult(array $result): Product
+    {
+        return new Product(
+            $result["ID"],
+            $result['Name'],
+            $result['Quantity'],
+            $result['Price'],
+            $result['Status'],
+            $result['IsDeleted'],
+            $result['LastUpdated']
+        );
+    }
+
+    private function query(string $query)
+    {
         $connection = ConnectionManager::get('default');
 
         $results = $connection->execute($query)->fetchAll('assoc');
