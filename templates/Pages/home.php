@@ -13,8 +13,6 @@
  * @license   https://opensource.org/licenses/mit-license.php MIT License
  * @var \App\View\AppView $this
  */
-use Cake\Cache\Cache;
-use Cake\Core\Plugin;
 
 $this->disableAutoLayout();
 
@@ -52,8 +50,9 @@ $this->disableAutoLayout();
             <div id="add-popup" class="add-popup-window">
                 Hello
             </div>
-            <?= $this->Form->create(null, ['url' => ['action' => 'search']]) ?>
-                <?= $this->Form->control('', [
+            <?= $this->Form->create(null, ['type' => 'get', 'url' => ['action' => 'search']]) ?>
+                <?= $this->Form->control('search', [
+                    'label' => '',
                     'type' => 'search',
                     'placeholder' => 'Search for Product',
                 ]); ?>

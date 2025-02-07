@@ -17,29 +17,33 @@ class ProductsController extends PagesController
     public function initialize(): void
     {
         parent::initialize();
+
+        $productsToDisplay = $this->getProducts();
+
+        $this->set('products', $productsToDisplay);
     }
 
     public function display(string ...$path): ?Response
     {
-        $searchQuery = $this->request->getQuery('search');
-
-        $productsToDisplay = $this->getProducts($searchQuery);
-
-        $this->set('products', $productsToDisplay);
-
         return parent::display(...$path);
     }
 
     /**
      * Finds the products that contain the user's provided keywords
-     * @param string $keywords
+     * @param string $searchKeywords
      * @return void
      */
     public function search()
     {
-        $keywords = $this->request->getQuery('search');
+        $searchKeywords = $this->request->getQuery('search');
+        
+        $productsToDisplay = $this->getProducts($searchKeywords);
 
-        $this->redirect(['action' => 'display', '?' => ['search' => $keywords]]);
+        $this->set('products', $productsToDisplay);
+        
+        $this->render('/pages/home');
+
+        
     }
     
     /**
@@ -126,7 +130,7 @@ class ProductsController extends PagesController
 
     private function getProducts($name = null)
     {
-        $filterName = $name ? 'AND Name LIKE $name' : '';
+        $filterName = $name ? " AND Name LIKE '%$name%'" : "";
 
         $results = $this->query(
             "SELECT *
