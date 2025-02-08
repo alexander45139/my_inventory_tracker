@@ -44,21 +44,11 @@ $this->disableAutoLayout();
     </header>
     <main class="main">
         <div class="container">
-            <h3>Add a Product</h3>
-
-            <label>Name</label>
-            <input type="text" />
-
-            <label>Quantity</label>
-            <input type="number" />
-
-            <label>Price</label>
-            <input type="number" />
-            
-            <label>Status</label>
-            <select>
-                <option value="ts">TS</option>
-            </select>
+            <?= $this->Form->create(null, ['type' => 'post', 'url' => ['action' => 'add']]) ?>
+                <?= $this->Form->control('name', ['type' => 'text']) ?>
+                <?= $this->Form->control('quantity', ['type' => 'number']) ?>
+                <?= $this->Form->control('price', ['type' => 'number']) ?>
+            <?= $this->Form->submit('Submit') ?>
         </div>
     </main>
 </body>

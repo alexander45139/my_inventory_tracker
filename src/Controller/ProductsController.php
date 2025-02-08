@@ -24,6 +24,14 @@ class ProductsController extends PagesController
     }
 
     /**
+     * Initial method of the 'add_products.php' page to send data to
+     * @return void
+     */
+    public function addProduct()
+    {
+    }
+
+    /**
      * Finds the products that contain the user's provided keywords
      * @param string $searchKeywords
      * @return void
@@ -48,14 +56,13 @@ class ProductsController extends PagesController
      * @param float $price
      * @param Status $status
      */
-    public function add(string $name, int $quantity, float $price, Status $status)
+    public function add(string $name, int $quantity, float $price)
     {
         $product = new Product(
             $this->getNextProductId(), 
             $name, 
             $quantity, 
-            $price, 
-            $status, 
+            $price,
             false, 
             new DateTime()
         );
@@ -121,6 +128,11 @@ class ProductsController extends PagesController
 
     }
 
+    /**
+     * Gets the non-deleted products from the database
+     * @param string $name - if provided, it fetches all products containing this param value
+     * @return array
+     */
     private function getProducts($name = null)
     {
         $filterName = $name ? " AND Name LIKE '%$name%'" : "";
@@ -141,6 +153,11 @@ class ProductsController extends PagesController
         return $products;
     }
 
+    /**
+     * Calculates the next unique ID to use when creating a
+     * new Product object
+     * @return float|int
+     */
     private function getNextProductId()
     {
         $maxProductIdResult = $this->query(
@@ -152,7 +169,13 @@ class ProductsController extends PagesController
         return $maxProductIdResult == [] ? 1 : $maxProductIdResult['ID'] + 1;
     }
 
-    private function createProductFromSQLResult(array $result): Product
+    /**
+     * Creates and returns a Product object from the provided
+     * result from an SQL query
+     * @param array $result - a row returned from an SQL query
+     * @return Product
+     */
+    private function createProductFromSQLResult($result): Product
     {
         return new Product(
             $result["ID"],
@@ -165,6 +188,12 @@ class ProductsController extends PagesController
         );
     }
 
+    /**
+     * Executes an SQL query in the 'cakephp_inventory_products'
+     * database and returns the results
+     * @param string $query
+     * @return array
+     */
     private function query(string $query)
     {
         $connection = ConnectionManager::get('default');

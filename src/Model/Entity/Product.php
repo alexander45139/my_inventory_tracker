@@ -26,13 +26,12 @@ class Product
     private bool $isDeleted;
     private DateTime $lastUpdated;
 
-    public function __construct($id, $name, $quantity, $price, $status, $isDeleted, $lastUpdated)
+    public function __construct($id, $name, $quantity, $price, $isDeleted, $lastUpdated)
     {
         $this->id = $id;
         $this->setName($name);
         $this->setQuantity($quantity);
-        $this->setPrice(price: $price);
-        $this->setStatus($status);
+        $this->setPrice($price);
         $this->setIsDeleted($isDeleted);
         $this->setLastUpdated($lastUpdated);
     }
@@ -62,6 +61,16 @@ class Product
         if ($quantity >= 0 && $quantity <= 1000)
         {
             $this->quantity = (int) $quantity;
+
+            if ($quantity > 10) {
+                $this->status = Status::InStock;
+            } else if ($quantity > 10) {
+                $this->status = Status::InStock;
+            } else if ($quantity >= 1 && $quantity <= 10) {
+                $this->status = Status::LowStock;
+            } else {
+                $this->status = Status::OutOfStock;
+            }
         }
     }
 
@@ -81,11 +90,6 @@ class Product
     public function getPrice()
     {
         return $this->price;
-    }
-
-    public function setStatus($status)
-    {
-        $this->status = Status::from($status);
     }
 
     public function getStatus()

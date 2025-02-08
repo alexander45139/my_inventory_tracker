@@ -73,12 +73,3 @@ hr {
 #url-rewriting-warning {
     display: none;
 }
-.add-popup-window {
-    display: none;
-    position: absolute;
-    background-color: darkgray;
-    left: 20%;
-    top: 20%;
-    width: 400px;
-    height: 800px;
-}

@@ -45,26 +45,7 @@ $this->disableAutoLayout();
     <main class="main">
         <div class="container">
             <div class="text-center">
-                <button onclick="openAddPopup()">Add Product</button>
-                <?= $this->Html->link('Add Product', ['action' => 'add-products']) ?>
-            </div>
-            <div id="add-popup" class="add-popup-window">
-                <h3>Add a Product</h3>
-
-                <label>Name</label>
-                <input type="text" />
-
-                <label>Quantity</label>
-                <input type="number" />
-
-                <label>Price</label>
-                <input type="number" />
-                
-                <label>Status</label>
-                <select>
-                    <option value="ts">TS</option>
-                </select>
-                
+                <?= $this->Html->link('Add Product', ['action' => 'add_product']) ?>
             </div>
             <?= $this->Form->create(null, ['type' => 'get', 'url' => ['action' => 'search']]) ?>
                 <?= $this->Form->control('search', [
