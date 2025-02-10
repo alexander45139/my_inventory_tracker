@@ -100,7 +100,7 @@ $this->disableAutoLayout();
                         <?= h($pr->getLastUpdated()) ?>
                     </div>
                     <div class="column">
-                        <button onChange="openEditPopup()">Edit</button>
+                        <button>Edit</button>
                     </div>
                     <div class="column">
                         <?= $this->Html->link('Delete', [

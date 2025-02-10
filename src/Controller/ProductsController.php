@@ -61,10 +61,15 @@ class ProductsController extends PagesController
             new DateTime()
         );
 
-        // validate Product before adding it to db
-        $this->Products->validateProduct($product);
+        $product->customValidate();
 
-        $this->redirect(['action' => 'display']);
+        if ($product->hasErrors()) {
+            $this->set('product', $product);
+        } else {
+            
+        }
+
+        // validate Product before adding it to db
     }
 
     /**

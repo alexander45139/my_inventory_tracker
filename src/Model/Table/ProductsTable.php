@@ -5,7 +5,8 @@ namespace App\Model\Table;
 
 use App\Model\Entity\Product;
 use Cake\ORM\Table;
-use Cake\Datasource\ConnectionManager;
+use Cake\Validation\Validator;
+use PHPUnit\Framework\MockObject\Stub\ReturnValueMap;
 
 class ProductsTable extends Table
 {
@@ -14,7 +15,7 @@ class ProductsTable extends Table
         parent::initialize($config);
 
         $this->setTable("products");
-        $this->setPrimaryKey("ID");
+        $this->setPrimaryKey("id");
     }
 
     /**
@@ -25,7 +26,7 @@ class ProductsTable extends Table
      */
     private function sqlQuery(string $query)
     {
-        $connection = $this->getConnection(); //ConnectionManager::get('default');
+        $connection = $this->getConnection();
 
         $results = $connection->execute($query)->fetchAll('assoc');
 
@@ -33,27 +34,21 @@ class ProductsTable extends Table
     }
 
     /**
-     * Gets a Product by the provided ID
-     * @param int $id
-     * @return \App\Model\Entity\Product
+     * Creates and returns a Product object from the provided
+     * result from an SQL query
+     * @param array $result - a row returned from an SQL query
+     * @return Product
      */
-    public function getProductById(int $id): Product
+    private function createProductFromSQLResult(array $result): Product
     {
-        $result = $this->sqlQuery(
-            "SELECT *
-            FROM products
-            WHERE ID = $id
-            LIMIT 1"
+        return new Product(
+            $result['id'],
+            $result['name'],
+            $result['quantity'],
+            $result['price'],
+            $result['status'],
+            $result['lastUpdated']
         );
-
-        return $this->createProductFromSQLResult($result);
-    }
-
-    public function validateProduct($product)
-    {
-        if ($product->getName()) {
-            
-        }
     }
 
     /**
@@ -61,7 +56,7 @@ class ProductsTable extends Table
      * @param string $name - if provided, it fetches all products containing this param value
      * @return array
      */
-    public function getProducts($name = null)
+    public function getProducts(string $name = null)
     {
         $filterName = $name ? " AND Name LIKE '%$name%'" : "";
 
@@ -82,6 +77,23 @@ class ProductsTable extends Table
     }
 
     /**
+     * Gets a Product by the provided ID
+     * @param int $id
+     * @return \App\Model\Entity\Product
+     */
+    public function getProductById(int $id): Product
+    {
+        $result = $this->sqlQuery(
+            "SELECT *
+            FROM products
+            WHERE ID = $id
+            LIMIT 1"
+        );
+
+        return $this->createProductFromSQLResult($result);
+    }
+
+    /**
      * Calculates the next unique ID to use when creating a
      * new Product object
      * @return float|int
@@ -96,23 +108,5 @@ class ProductsTable extends Table
         );
 
         return $maxProductIdResult == [] ? 1 : $maxProductIdResult[0]['ID'] + 1;
-    }
-
-    /**
-     * Creates and returns a Product object from the provided
-     * result from an SQL query
-     * @param array $result - a row returned from an SQL query
-     * @return Product
-     */
-    private function createProductFromSQLResult($result): Product
-    {
-        return new Product(
-            $result["ID"],
-            $result['Name'],
-            $result['Quantity'],
-            $result['Price'],
-            $result['Status'],
-            $result['LastUpdated']
-        );
     }
 }

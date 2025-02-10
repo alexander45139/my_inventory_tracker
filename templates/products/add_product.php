@@ -65,6 +65,11 @@ $this->disableAutoLayout();
                     'min' => 0,
                     'max'=> 10000
                 ]) ?>
+                <?php if (isset($product) && $product->hasErrors()): ?>
+                    <?php foreach($product->getErrors() as $error): ?>
+                        <div><?= $error ?></div>
+                    <?php endforeach ?>
+                <?php endif ?>
             <?= $this->Form->submit('Submit') ?>
         </div>
     </main>

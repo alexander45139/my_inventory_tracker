@@ -2,6 +2,7 @@
 namespace App\Model\Entity;
 
 use Cake\I18n\DateTime;
+use Cake\ORM\Entity;
 
 /**
  * Custom type that describes a Product object's stock status
@@ -16,8 +17,9 @@ enum Status: string
 /**
  * Product class containing the information of each inventory product
  */
-class Product
+class Product extends Entity
 {
+    // The columns of the products table
     private int $id;
     private string $name;
     private int $quantity;
@@ -104,5 +106,15 @@ class Product
     public function getLastUpdated() 
     {
         return $this->lastUpdated->format('Y-m-d H:i:s');
+    }
+
+    public function customValidate() {
+        if ($this->price > 100 && $this->quantity > 10) {
+            $this->setError('priceAndQuantity', 'Products with a price > 100 must have a minimum quantity of 10.');
+        }
+        
+        if (stripos($this->name, 'promo') !== false && $this->price >= 50) {
+            $this->setError('promoName', 'Products with a name containing "promo" must have a price < 50.');
+        }
     }
 }
