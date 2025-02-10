@@ -45,29 +45,27 @@ class ProductsController extends PagesController
         $this->set('products', $productsToDisplay);
         $this->set('searchKeywords', $searchKeywords);
         
-        $this->render('/pages/home');
+        $this->render('/products/home');
     }
     
     /**
      * Adds a new Product only if the provided $id is unique
-     * @param int $id
-     * @param string $name
-     * @param int $quantity
-     * @param float $price
-     * @param Status $status
      */
-    public function add(string $name, int $quantity, float $price)
+    public function add()
     {
+        $data = $this->request->getData();
+
         $product = new Product(
             $this->getNextProductId(), 
-            $name, 
-            $quantity, 
-            $price,
+            $data['name'], 
+            $data['quantity'], 
+            $data['price'],
             false, 
             new DateTime()
         );
 
         // validate Product before adding it to db
+        $this->validateProduct($product);
 
         $this->redirect(['action' => 'display']);
     }
@@ -119,13 +117,20 @@ class ProductsController extends PagesController
     private function getProductById(int $id): Product
     {
         $result = $this->query(
-            "SELECT TOP 1 *
+            "SELECT *
             FROM products
-            WHERE ID = $id"
+            WHERE ID = $id
+            LIMIT 1"
         );
 
         return $this->createProductFromSQLResult($result);
+    }
 
+    private function validateProduct($product)
+    {
+        if ($product->getName()) {
+            
+        }
     }
 
     /**
@@ -161,12 +166,13 @@ class ProductsController extends PagesController
     private function getNextProductId()
     {
         $maxProductIdResult = $this->query(
-            "SELECT TOP 1 ID
+            "SELECT ID
             FROM products
-            ORDER BY ID DESC"
+            ORDER BY ID DESC
+            LIMIT 1"
         );
 
-        return $maxProductIdResult == [] ? 1 : $maxProductIdResult['ID'] + 1;
+        return $maxProductIdResult == [] ? 1 : $maxProductIdResult[0]['ID'] + 1;
     }
 
     /**

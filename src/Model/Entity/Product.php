@@ -43,12 +43,7 @@ class Product
 
     public function setName($name)
     {
-        $length = strlen($name);
-
-        if ($length >= 3 && $length <= 50)
-        {
-            $this->name = $name;
-        }
+        $this->name = $name;
     }
 
     public function getName()
@@ -58,19 +53,16 @@ class Product
     
     public function setQuantity($quantity)
     {
-        if ($quantity >= 0 && $quantity <= 1000)
-        {
-            $this->quantity = (int) $quantity;
+        $this->quantity = (int) $quantity;
 
-            if ($quantity > 10) {
-                $this->status = Status::InStock;
-            } else if ($quantity > 10) {
-                $this->status = Status::InStock;
-            } else if ($quantity >= 1 && $quantity <= 10) {
-                $this->status = Status::LowStock;
-            } else {
-                $this->status = Status::OutOfStock;
-            }
+        if ($quantity > 10) {
+            $this->status = Status::InStock;
+        } else if ($quantity > 10) {
+            $this->status = Status::InStock;
+        } else if ($quantity >= 1 && $quantity <= 10) {
+            $this->status = Status::LowStock;
+        } else {
+            $this->status = Status::OutOfStock;
         }
     }
 
@@ -81,10 +73,7 @@ class Product
 
     public function setPrice($price)
     {
-        if ($price > 0 && $price <= 10000)
-        {
-            $this->price = (float) $price;
-        }
+        $this->price = (float) $price;
     }
 
     public function getPrice()

@@ -51,7 +51,7 @@ $this->disableAutoLayout();
                 <?= $this->Form->control('search', [
                     'label' => '',
                     'type' => 'search',
-                    'placeholder' => 'Search for Product',
+                    'placeholder' => 'Search for Product'
                 ]); ?>
                 <?= $this->Form->button('Search') ?>
             <?= $this->Form->end() ?>

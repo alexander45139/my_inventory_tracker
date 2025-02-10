@@ -45,9 +45,26 @@ $this->disableAutoLayout();
     <main class="main">
         <div class="container">
             <?= $this->Form->create(null, ['type' => 'post', 'url' => ['action' => 'add']]) ?>
-                <?= $this->Form->control('name', ['type' => 'text']) ?>
-                <?= $this->Form->control('quantity', ['type' => 'number']) ?>
-                <?= $this->Form->control('price', ['type' => 'number']) ?>
+                <?= $this->Form->control('name', [
+                    'type' => 'text',
+                    'required' => true,
+                    'minlength' => 3,
+                    'maxlength' => 50
+                ]) ?>
+                <?= $this->Form->control('quantity', [
+                    'type' => 'number',
+                    'required' => true,
+                    'step' => 0,
+                    'min' => 0,
+                    'max' => 1000
+                ]) ?>
+                <?= $this->Form->control('price', [
+                    'type' => 'number',
+                    'required' => true,
+                    'step' => 0.01,
+                    'min' => 0,
+                    'max'=> 10000
+                ]) ?>
             <?= $this->Form->submit('Submit') ?>
         </div>
     </main>
