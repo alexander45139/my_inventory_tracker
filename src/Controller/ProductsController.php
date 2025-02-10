@@ -4,10 +4,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Model\Entity\Product;
-use App\Model\Entity\Status;
-use Cake\Datasource\ConnectionManager;#
 use Cake\I18n\DateTime;
-use Cake\Http\Response;
 
 /**
  * The ProductsController class changes the Product objects
@@ -18,7 +15,7 @@ class ProductsController extends PagesController
     {
         parent::initialize();
 
-        $productsToDisplay = $this->getProducts();
+        $productsToDisplay = $this->Products->getProducts();
 
         $this->set('products', $productsToDisplay);
     }
@@ -40,7 +37,7 @@ class ProductsController extends PagesController
     {
         $searchKeywords = $this->request->getQuery('search');
         
-        $productsToDisplay = $this->getProducts($searchKeywords);
+        $productsToDisplay = $this->Products->getProducts($searchKeywords);
 
         $this->set('products', $productsToDisplay);
         $this->set('searchKeywords', $searchKeywords);
@@ -56,7 +53,7 @@ class ProductsController extends PagesController
         $data = $this->request->getData();
 
         $product = new Product(
-            $this->getNextProductId(), 
+            $this->Products->getNextProductId(), 
             $data['name'], 
             $data['quantity'], 
             $data['price'],
@@ -65,7 +62,7 @@ class ProductsController extends PagesController
         );
 
         // validate Product before adding it to db
-        $this->validateProduct($product);
+        $this->Products->validateProduct($product);
 
         $this->redirect(['action' => 'display']);
     }
@@ -100,7 +97,7 @@ class ProductsController extends PagesController
      */
     public function delete(int $id)
     {
-        $this->query(
+        $this->Products->query(
             "UPDATE products
                 SET IsDeleted = True
             WHERE ID = $id"
@@ -109,103 +106,8 @@ class ProductsController extends PagesController
         $this->redirect(['action' => 'display']);
     }
 
-    /**
-     * Gets a Product by the provided ID
-     * @param int $id
-     * @return \App\Model\Entity\Product
-     */
-    private function getProductById(int $id): Product
-    {
-        $result = $this->query(
-            "SELECT *
-            FROM products
-            WHERE ID = $id
-            LIMIT 1"
-        );
+    
 
-        return $this->createProductFromSQLResult($result);
-    }
-
-    private function validateProduct($product)
-    {
-        if ($product->getName()) {
-            
-        }
-    }
-
-    /**
-     * Gets the non-deleted products from the database
-     * @param string $name - if provided, it fetches all products containing this param value
-     * @return array
-     */
-    private function getProducts($name = null)
-    {
-        $filterName = $name ? " AND Name LIKE '%$name%'" : "";
-
-        $results = $this->query(
-            "SELECT *
-            FROM products
-            WHERE IsDeleted = False"
-            . $filterName
-        );
-
-        $products = [];
-
-        foreach ($results as $result) {
-            array_push($products, $this->createProductFromSQLResult($result));
-        }
-
-        return $products;
-    }
-
-    /**
-     * Calculates the next unique ID to use when creating a
-     * new Product object
-     * @return float|int
-     */
-    private function getNextProductId()
-    {
-        $maxProductIdResult = $this->query(
-            "SELECT ID
-            FROM products
-            ORDER BY ID DESC
-            LIMIT 1"
-        );
-
-        return $maxProductIdResult == [] ? 1 : $maxProductIdResult[0]['ID'] + 1;
-    }
-
-    /**
-     * Creates and returns a Product object from the provided
-     * result from an SQL query
-     * @param array $result - a row returned from an SQL query
-     * @return Product
-     */
-    private function createProductFromSQLResult($result): Product
-    {
-        return new Product(
-            $result["ID"],
-            $result['Name'],
-            $result['Quantity'],
-            $result['Price'],
-            $result['Status'],
-            $result['IsDeleted'],
-            $result['LastUpdated']
-        );
-    }
-
-    /**
-     * Executes an SQL query in the 'cakephp_inventory_products'
-     * database and returns the results
-     * @param string $query
-     * @return array
-     */
-    private function query(string $query)
-    {
-        $connection = ConnectionManager::get('default');
-
-        $results = $connection->execute($query)->fetchAll('assoc');
-
-        return $results;
-    }
+    
 }
+
