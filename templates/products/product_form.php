@@ -67,10 +67,10 @@ $this->disableAutoLayout();
                 ]) ?>
                 <?php if (isset($product) && $product->hasErrors()): ?>
                     <?php foreach($product->getErrors() as $error): ?>
-                        <div><?= $error ?></div>
+                        <div class="message error"><?= $error[0] ?></div>
                     <?php endforeach ?>
                 <?php endif ?>
-            <?= $this->Form->submit('Submit') ?>
+            <div class='text-center'><?= $this->Form->submit('Submit') ?></div>
         </div>
     </main>
 </body>

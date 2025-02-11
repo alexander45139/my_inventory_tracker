@@ -108,13 +108,26 @@ class Product extends Entity
         return $this->lastUpdated->format('Y-m-d H:i:s');
     }
 
+    /**
+     * Validates the rules of the product's values and assigns error messages
+     * if those rules are not met for this object
+     * @return void
+     */
     public function customValidate() {
         if ($this->price > 100 && $this->quantity > 10) {
-            $this->setError('priceAndQuantity', 'Products with a price > 100 must have a minimum quantity of 10.');
+            $this->setError(
+                'priceAndQuantity',
+                'Products with a price > 100 must have a minimum quantity of 10.'
+            );
         }
         
-        if (stripos($this->name, 'promo') !== false && $this->price >= 50) {
-            $this->setError('promoName', 'Products with a name containing "promo" must have a price < 50.');
+        if (stripos(mb_strtolower($this->name), 'promo') !== false
+            && $this->price >= 50
+        ) {
+            $this->setError(
+                'promoName',
+                'Products with a name containing "promo" must have a price < 50.'
+            );
         }
     }
 }

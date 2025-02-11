@@ -45,15 +45,21 @@ $this->disableAutoLayout();
     <main class="main">
         <div class="container">
             <div class="text-center">
-                <?= $this->Html->link('Add Product', ['action' => 'add_product']) ?>
+                <?= $this->Html->link('Add Product', ['action' => 'product_form']) ?>
             </div>
             <?= $this->Form->create(null, ['type' => 'get', 'url' => ['action' => 'search']]) ?>
-                <?= $this->Form->control('search', [
-                    'label' => '',
-                    'type' => 'search',
-                    'placeholder' => 'Search for Product'
-                ]); ?>
-                <?= $this->Form->button('Search') ?>
+                <div class="search-container">
+                    <div class="search-input">
+                        <?= $this->Form->control('search', [
+                            'label' => '',
+                            'type' => 'search',
+                            'placeholder' => 'Search for Product'
+                        ]) ?>
+                    </div>
+                    <div class="search-button">
+                        <?= $this->Form->button('Search') ?>
+                    </div>
+                </div>
             <?= $this->Form->end() ?>
             <?php if (isset($searchKeywords) && $searchKeywords !== ''): ?>
                 <h2>Search for '<?= $searchKeywords ?>'</h2>

@@ -11,6 +11,9 @@ use Cake\I18n\DateTime;
  */
 class ProductsController extends PagesController
 {
+    private string $homePage = '/products/home';
+    private string $productFormPage = '/products/product_form';
+
     public function initialize(): void
     {
         parent::initialize();
@@ -21,10 +24,10 @@ class ProductsController extends PagesController
     }
 
     /**
-     * Initial method of the 'add_products.php' page to send data to
+     * Initial method of the 'product_form.php'
      * @return void
      */
-    public function addProduct()
+    public function productForm()
     {
     }
 
@@ -36,13 +39,17 @@ class ProductsController extends PagesController
     public function search()
     {
         $searchKeywords = $this->request->getQuery('search');
-        
-        $productsToDisplay = $this->Products->getProducts($searchKeywords);
 
-        $this->set('products', $productsToDisplay);
-        $this->set('searchKeywords', $searchKeywords);
-        
-        $this->render('/products/home');
+        if ($searchKeywords !== '') {
+            $productsToDisplay = $this->Products->getProducts($searchKeywords);
+
+            $this->set('products', $productsToDisplay);
+            $this->set('searchKeywords', $searchKeywords);
+            
+            $this->render($this->homePage);
+        } else {
+            $this->redirect($this->homePage);
+        }
     }
     
     /**
@@ -65,8 +72,10 @@ class ProductsController extends PagesController
 
         if ($product->hasErrors()) {
             $this->set('product', $product);
+            $this->render($this->productFormPage);
         } else {
-            
+            $this->Products->addProduct($product);
+            $this->redirect($this->homePage);
         }
 
         // validate Product before adding it to db
@@ -102,13 +111,9 @@ class ProductsController extends PagesController
      */
     public function delete(int $id)
     {
-        $this->Products->query(
-            "UPDATE products
-                SET IsDeleted = True
-            WHERE ID = $id"
-        );
+        $this->Products->softDeleteProduct($id);
 
-        $this->redirect(['action' => 'display']);
+        $this->redirect($this->homePage);
     }
 
     

@@ -73,3 +73,15 @@ hr {
 #url-rewriting-warning {
     display: none;
 }
+.search-container {
+    display: flex;
+    width: 100%;
+    align-items: baseline;
+    gap: 10px;
+}
+.search-container .search-input {
+    flex: 4;
+}
+.search-container .search-button {
+    flex: 1;
+}

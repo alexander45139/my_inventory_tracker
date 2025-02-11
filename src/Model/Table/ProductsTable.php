@@ -24,13 +24,17 @@ class ProductsTable extends Table
      * @param string $query
      * @return array
      */
-    private function sqlQuery(string $query)
+    private function sqlQuery(string $query, $params = []): array
     {
-        $connection = $this->getConnection();
+        try {
+            $connection = $this->getConnection();
 
-        $results = $connection->execute($query)->fetchAll('assoc');
-
-        return $results;
+            $results = $connection->execute($query, $params)->fetchAll('assoc');
+            
+            return $results;
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
     }
 
     /**
@@ -108,5 +112,36 @@ class ProductsTable extends Table
         );
 
         return $maxProductIdResult == [] ? 1 : $maxProductIdResult[0]['ID'] + 1;
+    }
+
+    public function addProduct($product) {
+        $this->sqlQuery(
+            "INSERT INTO products
+            VALUES (
+                :id,
+                :name,
+                :quantity,
+                :price,
+                :status,
+                :isDeleted,
+                :lastUpdated
+            )", [
+                'id' => $product->getID(),
+                'name' => $product->getName(),
+                'quantity' => $product->getQuantity(),
+                'price' => $product->getPrice(),
+                'status' => $product->getStatus(),
+                'isDeleted' => $product->getIsDeleted(),
+                'lastUpdated' => $product->getLastUpdated()
+            ]
+        );
+    }
+    
+    public function softDeleteProduct($id) {
+        $this->sqlQuery(
+            "UPDATE products
+                SET IsDeleted = True
+            WHERE ID = $id"
+        );
     }
 }
