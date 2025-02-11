@@ -14,6 +14,8 @@
  * @var \App\View\AppView $this
  */
 
+use App\Model\Entity\Status;
+
 $this->disableAutoLayout();
 
 ?>
@@ -47,7 +49,10 @@ $this->disableAutoLayout();
             <div class="text-center">
                 <?= $this->Html->link('Add Product', ['action' => 'product_form']) ?>
             </div>
-            <?= $this->Form->create(null, ['type' => 'get', 'url' => ['action' => 'search']]) ?>
+            <?= $this->Form->create(null, [
+                'type' => 'get',
+                'url' => ['action' => 'search']
+            ]) ?>
                 <div class="search-container">
                     <div class="search-input">
                         <?= $this->Form->control('search', [
@@ -56,6 +61,15 @@ $this->disableAutoLayout();
                             'placeholder' => 'Search for Product'
                         ]) ?>
                     </div>
+                    <div class="search-status-filter">
+                        <?= $this->Form->select(
+                            'status',
+                            array_merge(
+                                ['All' => 'All (Select Status)'],
+                                array_column(Status::cases(), 'value', 'value')
+                            )
+                        ) ?>
+                    </div>
                     <div class="search-button">
                         <?= $this->Form->button('Search') ?>
                     </div>
@@ -63,6 +77,9 @@ $this->disableAutoLayout();
             <?= $this->Form->end() ?>
             <?php if (isset($searchKeywords) && $searchKeywords !== ''): ?>
                 <h2>Search for '<?= $searchKeywords ?>'</h2>
+            <?php endif ?>
+            <?php if (isset($filterStatus) && $filterStatus !== 'All'): ?>
+                <h2>Filtered for '<?= $filterStatus ?>'</h2>
             <?php endif ?>
             <div class="content">
                 <div class="row">

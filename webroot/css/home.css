@@ -82,6 +82,9 @@ hr {
 .search-container .search-input {
     flex: 4;
 }
+.search-status-filter {
+    flex: 1;
+}
 .search-container .search-button {
     flex: 1;
 }

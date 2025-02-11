@@ -43,12 +43,14 @@ class ProductsController extends PagesController
     public function search()
     {
         $searchKeywords = $this->request->getQuery('search');
+        $filterStatus = $this->request->getQuery('status');
 
-        if ($searchKeywords !== '') {
-            $productsToDisplay = $this->Products->getProducts($searchKeywords);
+        if ($searchKeywords !== '' && $filterStatus !== 'All') {
+            $productsToDisplay = $this->Products->getProducts($searchKeywords, $filterStatus);
 
             $this->set('products', $productsToDisplay);
             $this->set('searchKeywords', $searchKeywords);
+            $this->set('filterStatus', $filterStatus);
             
             $this->render($this->homePage);
         } else {

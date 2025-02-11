@@ -60,15 +60,16 @@ class ProductsTable extends Table
      * @param string $name - if provided, it fetches all products containing this param value
      * @return array
      */
-    public function getProducts(string $name = null)
+    public function getProducts(string $name = null, string $status = null)
     {
         $filterName = $name ? " AND Name LIKE '%$name%'" : "";
+        $filterStatus = $status ? " AND Status = '$status'" : "";
 
         $results = $this->sqlQuery(
             "SELECT *
             FROM products
             WHERE IsDeleted = False"
-            . $filterName
+            . $filterName . $filterStatus
         );
 
         $products = [];
