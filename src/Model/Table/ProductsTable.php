@@ -24,7 +24,7 @@ class ProductsTable extends Table
      * @param string $query
      * @return array
      */
-    private function sqlQuery(string $query, $params = []): array
+    private function sqlQuery(string $query, array $params = []): array
     {
         try {
             $connection = $this->getConnection();
@@ -50,7 +50,7 @@ class ProductsTable extends Table
             $result['name'],
             $result['quantity'],
             $result['price'],
-            $result['status'],
+            $result['isDeleted'],
             $result['lastUpdated']
         );
     }
@@ -94,7 +94,7 @@ class ProductsTable extends Table
             LIMIT 1"
         );
 
-        return $this->createProductFromSQLResult($result);
+        return $this->createProductFromSQLResult($result[0]);
     }
 
     /**
@@ -114,7 +114,7 @@ class ProductsTable extends Table
         return $maxProductIdResult == [] ? 1 : $maxProductIdResult[0]['ID'] + 1;
     }
 
-    public function addProduct($product) {
+    public function addProduct(Product $product) {
         $this->sqlQuery(
             "INSERT INTO products
             VALUES (
@@ -136,8 +136,28 @@ class ProductsTable extends Table
             ]
         );
     }
+
+    public function updateProduct(Product $product) {
+        $this->sqlQuery(
+            "UPDATE products
+                SET name = :name,
+                quantity = :quantity,
+                price = :price,
+                status = :status,
+                lastUpdated = :lastUpdated
+            WHERE id = :id",
+            [
+                'id' => $product->getID(),
+                'name' => $product->getName(),
+                'quantity' => $product->getQuantity(),
+                'price' => $product->getPrice(),
+                'status' => $product->getStatus(),
+                'lastUpdated' => $product->getLastUpdated()
+            ]
+        );
+    }
     
-    public function softDeleteProduct($id) {
+    public function softDeleteProduct(int $id) {
         $this->sqlQuery(
             "UPDATE products
                 SET IsDeleted = True

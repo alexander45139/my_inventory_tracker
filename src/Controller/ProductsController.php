@@ -25,10 +25,14 @@ class ProductsController extends PagesController
 
     /**
      * Initial method of the 'product_form.php'
+     * @param int $id
      * @return void
      */
-    public function productForm()
+    public function productForm(int $id = null)
     {
+        $product = ($id !== null) ? $this->Products->getProductById($id) : null;
+
+        $this->set('product', $product);
     }
 
     /**
@@ -83,25 +87,22 @@ class ProductsController extends PagesController
 
     /**
      * Changes a property's value of a Product object
-     * @param mixed $id
-     * @param mixed $productProperty
-     * @param mixed $newValue
+     * @param int $id
      * @return void
      */
-    public function edit(int $id, string $productProperty, mixed $newValue)
+    public function edit(int $id)
     {
-        /* $productPropertyWithFirstCapital = ucfirst($productProperty);  // capitalise first letter
-        $oldProduct = $this->getProductById($id);
-        $newProduct = $oldProduct;
-        $isProductChanged = $newProduct->{"set$productPropertyWithFirstCapital"}($newValue);
-        
-        if (!$isProductChanged) {
-            $newProduct->setLastUpdatedAsNow();
-            $this->products[array_search($oldProduct, $this->products)] = $newProduct;
-            
-        } else {
-            // code to return an error message
-        } */
+        $data = $this->request->getData();
+
+        $product = $this->Products->getProductById($id);
+
+        $product->setName($data['name']);
+        $product->setQuantity((int) $data['quantity']);
+        $product->setPrice((float) $data['price']);
+
+        $this->Products->updateProduct($product);
+
+        $this->redirect($this->homePage);
     }
 
     /**

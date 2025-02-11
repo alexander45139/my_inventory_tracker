@@ -43,9 +43,12 @@ class Product extends Entity
         return $this->id;
     }
 
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
+
+        // Set object's last update as now
+        $this->lastUpdated = new DateTime();
     }
 
     public function getName()
@@ -53,9 +56,12 @@ class Product extends Entity
         return $this->name;
     }
     
-    public function setQuantity($quantity)
+    public function setQuantity(int $quantity)
     {
-        $this->quantity = (int) $quantity;
+        $this->quantity = $quantity;
+
+        // Set object's last update as now
+        $this->lastUpdated = new DateTime();
 
         if ($quantity > 10) {
             $this->status = Status::InStock;
@@ -73,9 +79,12 @@ class Product extends Entity
         return $this->quantity;
     }
 
-    public function setPrice($price)
+    public function setPrice(float $price)
     {
-        $this->price = (float) $price;
+        $this->price = $price;
+
+        // Set object's last update as now
+        $this->lastUpdated = new DateTime();
     }
 
     public function getPrice()
@@ -88,9 +97,12 @@ class Product extends Entity
         return $this->status->value;
     }
 
-    public function setIsDeleted($isDeleted)
+    public function setIsDeleted(bool $isDeleted)
     {
         $this->isDeleted = $isDeleted;
+
+        // Set object's last update as now
+        $this->lastUpdated = new DateTime();
     }
 
     public function getIsDeleted()

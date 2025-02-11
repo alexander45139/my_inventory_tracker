@@ -106,7 +106,9 @@ $this->disableAutoLayout();
                         <?= h($pr->getLastUpdated()) ?>
                     </div>
                     <div class="column">
-                        <button>Edit</button>
+                        <?= $this->Html->link('Edit', [
+                            'action' => 'product_form', $pr->getId()
+                        ]) ?>
                     </div>
                     <div class="column">
                         <?= $this->Html->link('Delete', [

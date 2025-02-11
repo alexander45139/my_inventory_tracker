@@ -44,16 +44,21 @@ $this->disableAutoLayout();
     </header>
     <main class="main">
         <div class="container">
-            <?= $this->Form->create(null, ['type' => 'post', 'url' => ['action' => 'add']]) ?>
+            <?= $this->Form->create(null, [
+                'type' => 'post',
+                'url' => ($product === null) ? ['action' => 'add'] : ['action' => 'edit', $product->getID()],
+            ]) ?>
                 <?= $this->Form->control('name', [
                     'type' => 'text',
                     'required' => true,
+                    'value' => ($product === null) ? '': $product->getName(),
                     'minlength' => 3,
                     'maxlength' => 50
                 ]) ?>
                 <?= $this->Form->control('quantity', [
                     'type' => 'number',
                     'required' => true,
+                    'value' => ($product === null) ? '': $product->getQuantity(),
                     'step' => 0,
                     'min' => 0,
                     'max' => 1000
@@ -61,8 +66,9 @@ $this->disableAutoLayout();
                 <?= $this->Form->control('price', [
                     'type' => 'number',
                     'required' => true,
+                    'value' => ($product === null) ? '': $product->getPrice(),
                     'step' => 0.01,
-                    'min' => 0,
+                    'min' => 0.01,
                     'max'=> 10000
                 ]) ?>
                 <?php if (isset($product) && $product->hasErrors()): ?>
