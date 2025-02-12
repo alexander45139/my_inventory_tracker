@@ -58,7 +58,8 @@ $this->disableAutoLayout();
                         <?= $this->Form->control('search', [
                             'label' => '',
                             'type' => 'search',
-                            'placeholder' => 'Search for Product'
+                            'placeholder' => 'Search for Product',
+                            'value' => isset($searchKeywords) ? $searchKeywords : ''
                         ]) ?>
                     </div>
                     <div class="search-status-filter">
@@ -67,7 +68,8 @@ $this->disableAutoLayout();
                             array_merge(
                                 ['All' => 'All (Select Status)'],
                                 array_column(Status::cases(), 'value', 'value')
-                            )
+                            ),
+                            ['default' => isset($filterStatus) ? $filterStatus : 'All']
                         ) ?>
                     </div>
                     <div class="search-button">
@@ -123,14 +125,17 @@ $this->disableAutoLayout();
                         <?= h($pr->getLastUpdated()) ?>
                     </div>
                     <div class="column">
-                        <?= $this->Html->link('Edit', [
-                            'action' => 'product_form', $pr->getId()
-                        ]) ?>
+                        <?= $this->Html->link(
+                            'Edit',
+                            ['action' => 'product_form', $pr->getId()]
+                        ) ?>
                     </div>
                     <div class="column">
-                        <?= $this->Html->link('Delete', [
-                            'action' => 'delete', $pr->getId()
-                        ]) ?>
+                        <?= $this->Html->link(
+                            'Delete',
+                            ['action' => 'delete', $pr->getId()],
+                            ['confirm' => 'Are you sure you want to delete "' . $pr->getName() . '"?']
+                        ) ?>
                     </div>
                 </div>
                 <?php endforeach ?>

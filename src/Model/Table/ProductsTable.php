@@ -66,7 +66,14 @@ class ProductsTable extends Table
         $filterStatus = $status ? " AND Status = '$status'" : "";
 
         $results = $this->sqlQuery(
-            "SELECT *
+            "SELECT
+                id,
+                name,
+                quantity,
+                price,
+                status,
+                isDeleted,
+                lastUpdated
             FROM products
             WHERE IsDeleted = False"
             . $filterName . $filterStatus
@@ -89,7 +96,14 @@ class ProductsTable extends Table
     public function getProductById(int $id): Product
     {
         $result = $this->sqlQuery(
-            "SELECT *
+            "SELECT
+                id,
+                name,
+                quantity,
+                price,
+                status,
+                isDeleted,
+                lastUpdated
             FROM products
             WHERE ID = $id
             LIMIT 1"
@@ -106,7 +120,7 @@ class ProductsTable extends Table
     public function getNextProductId()
     {
         $maxProductIdResult = $this->sqlQuery(
-            "SELECT ID
+            "SELECT id
             FROM products
             ORDER BY ID DESC
             LIMIT 1"

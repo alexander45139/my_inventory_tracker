@@ -20,8 +20,17 @@ class ProductsController extends PagesController
 
         $productsToDisplay = $this->Products->getProducts();
 
+        /* $paginatedProductsToDisplay = $this->paginate(
+            $productsToDisplay, 
+            [
+                'limit' => 10
+            ]
+        ); */
+
         $this->set('products', $productsToDisplay);
     }
+
+
 
     /**
      * Initial method of the 'product_form.php'
@@ -45,7 +54,7 @@ class ProductsController extends PagesController
         $searchKeywords = $this->request->getQuery('search');
         $filterStatus = $this->request->getQuery('status');
 
-        if ($searchKeywords !== '' && $filterStatus !== 'All') {
+        if ($searchKeywords !== '' || $filterStatus !== 'All') {
             $productsToDisplay = $this->Products->getProducts($searchKeywords, $filterStatus);
 
             $this->set('products', $productsToDisplay);

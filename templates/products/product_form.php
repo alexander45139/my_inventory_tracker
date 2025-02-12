@@ -23,7 +23,7 @@ $this->disableAutoLayout();
     <?= $this->Html->charset() ?>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>
-        Inventory Tracker: Add Product
+        Inventory Tracker: Product Form
     </title>
     <?= $this->Html->meta('icon') ?>
 
@@ -38,7 +38,11 @@ $this->disableAutoLayout();
     <header>
         <div class="container text-center">
             <h1>
-                Add Product
+                <?php if ($product === null): ?>
+                    Add Product
+                <?php else: ?>
+                    Edit Product
+                <?php endif ?>
             </h1>
         </div>
     </header>
@@ -76,7 +80,10 @@ $this->disableAutoLayout();
                         <div class="message error"><?= $error[0] ?></div>
                     <?php endforeach ?>
                 <?php endif ?>
-            <div class='text-center'><?= $this->Form->submit('Submit') ?></div>
+            <div class='text-center'>
+                <?= $this->Form->submit('Submit') ?>
+                <?= $this->Html->link('Cancel', ['action' => 'home']) ?>
+            </div>
         </div>
     </main>
 </body>
