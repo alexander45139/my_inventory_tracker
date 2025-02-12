@@ -84,6 +84,9 @@ class ProductsController extends PagesController
             (float) $data['price']
         );
 
+        $product->customValidate();
+
+        // product isn't inserted into database if custom validation is not met
         if ($product->hasErrors()) {
             $this->set('formType', 'add');
             $this->set('product', $product);
@@ -112,9 +115,18 @@ class ProductsController extends PagesController
         $product->setQuantity((int) $data['quantity']);
         $product->setPrice((float) $data['price']);
 
-        $this->Products->updateProduct($product);
+        $product->customValidate();
 
-        $this->redirect($this->homePage);
+        if ($product->hasErrors()) {
+            $this->set('formType', 'edit');
+            $this->set('product', $product);
+
+            $this->render($this->productFormPage);
+        } else {
+            $this->Products->updateProduct($product);
+            
+            $this->redirect($this->homePage);
+        }
     }
 
     /**

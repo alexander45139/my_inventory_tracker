@@ -76,7 +76,7 @@ class ProductsTable extends Table
 
     /**
      * Creates a new Product object from parameters that are user inputs
-     * from the Add Product form in addition to validating those inputs.
+     * from the Add Product form.
      * @param string $name
      * @param int $quantity
      * @param float $price
@@ -91,8 +91,6 @@ class ProductsTable extends Table
             'isDeleted' => false,
             'lastUpdated' => new DateTime()
         ]);
-
-        $newProduct->customValidate();
 
         return $newProduct;
     }
