@@ -28,7 +28,17 @@ class Product extends Entity
     private bool $isDeleted;
     private DateTime $lastUpdated;
 
-    public function __construct($id, $name, $quantity, $price, $isDeleted, $lastUpdated)
+    public function __construct($properties, $options = [])
+    {
+        $this->id = $properties['id'];
+        $this->setName($properties['name']);
+        $this->setQuantity($properties['quantity']);
+        $this->setPrice($properties['price']);
+        $this->setIsDeleted($properties['isDeleted']);
+        $this->setLastUpdated($properties['lastUpdated']);
+    }
+
+    /* public function __construct($id, $name, $quantity, $price, $isDeleted, $lastUpdated)
     {
         $this->id = $id;
         $this->setName($name);
@@ -36,7 +46,7 @@ class Product extends Entity
         $this->setPrice($price);
         $this->setIsDeleted($isDeleted);
         $this->setLastUpdated($lastUpdated);
-    }
+    } */
 
     public function getId()
     {

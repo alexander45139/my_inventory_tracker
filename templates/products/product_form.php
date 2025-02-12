@@ -38,7 +38,7 @@ $this->disableAutoLayout();
     <header>
         <div class="container text-center">
             <h1>
-                <?php if ($product === null): ?>
+                <?php if ($formType === 'add'): ?>
                     Add Product
                 <?php else: ?>
                     Edit Product
@@ -50,7 +50,7 @@ $this->disableAutoLayout();
         <div class="container">
             <?= $this->Form->create(null, [
                 'type' => 'post',
-                'url' => ($product === null) ? ['action' => 'add'] : ['action' => 'edit', $product->getID()],
+                'url' => ($formType === 'add') ? ['action' => 'add'] : ['action' => 'edit', $product->getID()],
             ]) ?>
                 <?= $this->Form->control('name', [
                     'type' => 'text',

@@ -3,9 +3,6 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Model\Entity\Product;
-use Cake\I18n\DateTime;
-
 /**
  * The ProductsController class changes the Product objects
  */
@@ -20,12 +17,10 @@ class ProductsController extends PagesController
 
         $productsToDisplay = $this->Products->getProducts();
 
-        /* $paginatedProductsToDisplay = $this->paginate(
-            $productsToDisplay, 
-            [
-                'limit' => 10
-            ]
-        ); */
+        /* $this->paginate($this->Products->find(), [
+            'limit' => 5,
+            'page' => 1
+        ]); */
 
         $this->set('products', $productsToDisplay);
     }
@@ -41,6 +36,7 @@ class ProductsController extends PagesController
     {
         $product = ($id !== null) ? $this->Products->getProductById($id) : null;
 
+        $this->set('formType', ($id === null) ? 'add' : 'edit');
         $this->set('product', $product);
     }
 
@@ -74,26 +70,22 @@ class ProductsController extends PagesController
     {
         $data = $this->request->getData();
 
-        $product = new Product(
-            $this->Products->getNextProductId(), 
+        $product = $this->Products->createNewProduct(
             $data['name'], 
             $data['quantity'], 
-            $data['price'],
-            false, 
-            new DateTime()
+            $data['price']
         );
 
-        $product->customValidate();
-
         if ($product->hasErrors()) {
+            $this->set('formType', 'add');
             $this->set('product', $product);
+
             $this->render($this->productFormPage);
         } else {
-            $this->Products->addProduct($product);
+            $this->Products->insertProduct($product);
+
             $this->redirect($this->homePage);
         }
-
-        // validate Product before adding it to db
     }
 
     /**
@@ -124,12 +116,8 @@ class ProductsController extends PagesController
     public function delete(int $id)
     {
         $this->Products->softDeleteProduct($id);
-
+        
         $this->redirect($this->homePage);
     }
-
-    
-
-    
 }
 

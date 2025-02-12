@@ -4,9 +4,10 @@ declare(strict_types=1);
 namespace App\Model\Table;
 
 use App\Model\Entity\Product;
+use Cake\Datasource\ConnectionInterface;
 use Cake\ORM\Table;
-use Cake\Validation\Validator;
-use PHPUnit\Framework\MockObject\Stub\ReturnValueMap;
+use Cake\I18n\DateTime;
+use Cake\Datasource\ConnectionManager;
 
 class ProductsTable extends Table
 {
@@ -14,45 +15,9 @@ class ProductsTable extends Table
     {
         parent::initialize($config);
 
-        $this->setTable("products");
-        $this->setPrimaryKey("id");
-    }
-
-    /**
-     * Executes an SQL query in the 'cakephp_inventory_products'
-     * database and returns the results
-     * @param string $query
-     * @return array
-     */
-    private function sqlQuery(string $query, array $params = []): array
-    {
-        try {
-            $connection = $this->getConnection();
-
-            $results = $connection->execute($query, $params)->fetchAll('assoc');
-            
-            return $results;
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
-        }
-    }
-
-    /**
-     * Creates and returns a Product object from the provided
-     * result from an SQL query
-     * @param array $result - a row returned from an SQL query
-     * @return Product
-     */
-    private function createProductFromSQLResult(array $result): Product
-    {
-        return new Product(
-            $result['id'],
-            $result['name'],
-            $result['quantity'],
-            $result['price'],
-            $result['isDeleted'],
-            $result['lastUpdated']
-        );
+        $this->setTable('products');
+        $this->setPrimaryKey('id');
+        $this->setConnection(ConnectionManager::get('default'));
     }
 
     /**
@@ -62,30 +27,19 @@ class ProductsTable extends Table
      */
     public function getProducts(string $name = null, string $status = null)
     {
-        $filterName = $name ? " AND Name LIKE '%$name%'" : "";
-        $filterStatus = $status ? " AND Status = '$status'" : "";
+        $conditions = ['isDeleted' => False];
 
-        $results = $this->sqlQuery(
-            "SELECT
-                id,
-                name,
-                quantity,
-                price,
-                status,
-                isDeleted,
-                lastUpdated
-            FROM products
-            WHERE IsDeleted = False"
-            . $filterName . $filterStatus
-        );
-
-        $products = [];
-
-        foreach ($results as $result) {
-            array_push($products, $this->createProductFromSQLResult($result));
+        if ($name !== null) {
+            $conditions['name LIKE'] = '%' . $name . '%';
         }
 
-        return $products;
+        if ($status !== null) {
+            $conditions['status'] = $status;
+        }
+
+        $results = $this->find()->where($conditions)->toArray();
+
+        return $results;
     }
 
     /**
@@ -95,21 +49,10 @@ class ProductsTable extends Table
      */
     public function getProductById(int $id): Product
     {
-        $result = $this->sqlQuery(
-            "SELECT
-                id,
-                name,
-                quantity,
-                price,
-                status,
-                isDeleted,
-                lastUpdated
-            FROM products
-            WHERE ID = $id
-            LIMIT 1"
-        );
-
-        return $this->createProductFromSQLResult($result[0]);
+        return $this->find()
+            ->where(['id' => $id])
+            ->limit(1)
+            ->toArray()[0];
     }
 
     /**
@@ -119,56 +62,52 @@ class ProductsTable extends Table
      */
     public function getNextProductId()
     {
-        $maxProductIdResult = $this->sqlQuery(
-            "SELECT id
-            FROM products
-            ORDER BY ID DESC
-            LIMIT 1"
-        );
+        $maxProductIdResult = $this->find()
+            ->select('id')
+            ->disableHydration()
+            ->orderByDesc('id')
+            ->limit(1)
+            ->toArray();
 
-        return $maxProductIdResult == [] ? 1 : $maxProductIdResult[0]['ID'] + 1;
+        return $maxProductIdResult == [] ? 1 : $maxProductIdResult[0]['id'] + 1;
     }
 
-    public function addProduct(Product $product) {
-        $this->sqlQuery(
-            "INSERT INTO products
-            VALUES (
-                :id,
-                :name,
-                :quantity,
-                :price,
-                :status,
-                :isDeleted,
-                :lastUpdated
-            )", [
-                'id' => $product->getID(),
-                'name' => $product->getName(),
-                'quantity' => $product->getQuantity(),
-                'price' => $product->getPrice(),
-                'status' => $product->getStatus(),
-                'isDeleted' => $product->getIsDeleted(),
-                'lastUpdated' => $product->getLastUpdated()
-            ]
-        );
+    public function createNewProduct($name, $quantity, $price) {
+        $newProduct = new Product([
+            'id' => $this->getNextProductId(),
+            'name' => $name,
+            'quantity' => $quantity,
+            'price' => $price,
+            'isDeleted' => false,
+            'lastUpdated' => new DateTime()
+        ]);
+
+        $newProduct->customValidate();
+
+        return $newProduct;
+    }
+
+    public function insertProduct(Product $product) {
+        $this->getConnection()->insert($this->getTable(), [
+            'name' => $product->getName(),
+            'quantity' => $product->getQuantity(),
+            'price' => $product->getPrice(),
+            'status' => $product->getStatus(),
+            'lastUpdated' => $product->getLastUpdated()
+        ]);
     }
 
     public function updateProduct(Product $product) {
-        $this->sqlQuery(
-            "UPDATE products
-                SET name = :name,
-                quantity = :quantity,
-                price = :price,
-                status = :status,
-                lastUpdated = :lastUpdated
-            WHERE id = :id",
+        $this->getConnection()->update(
+            $this->getTable(), 
             [
-                'id' => $product->getID(),
                 'name' => $product->getName(),
                 'quantity' => $product->getQuantity(),
                 'price' => $product->getPrice(),
                 'status' => $product->getStatus(),
                 'lastUpdated' => $product->getLastUpdated()
-            ]
+            ],
+            ['id' => $product->getId()]
         );
     }
     
