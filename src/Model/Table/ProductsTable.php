@@ -15,6 +15,7 @@ class ProductsTable extends Table
     {
         parent::initialize($config);
 
+        // sets up the information for this model to use for interacting with the database
         $this->setTable('products');
         $this->setPrimaryKey('id');
         $this->setConnection(ConnectionManager::get('default'));
@@ -23,23 +24,24 @@ class ProductsTable extends Table
     /**
      * Gets the non-deleted products from the database
      * @param string $name - if provided, it fetches all products containing this param value
+     * @param string $status - if provided, it fetches all products filtered by the provided status
      * @return array
      */
-    public function getProducts(string $name = null, string $status = null)
+    public function getProductsQuery(string $name = null, string $status = null)
     {
         $conditions = ['isDeleted' => False];
 
         if ($name !== null) {
-            $conditions['name LIKE'] = '%' . $name . '%';
+            $conditions['LOWER(name) LIKE'] = '%' . $name . '%';
         }
 
-        if ($status !== null) {
+        if ($status !== null && $status !== 'All') {
             $conditions['status'] = $status;
         }
 
-        $results = $this->find()->where($conditions)->toArray();
+        $query = $this->find()->where($conditions);
 
-        return $results;
+        return $query;
     }
 
     /**
@@ -72,7 +74,15 @@ class ProductsTable extends Table
         return $maxProductIdResult == [] ? 1 : $maxProductIdResult[0]['id'] + 1;
     }
 
-    public function createNewProduct($name, $quantity, $price) {
+    /**
+     * Creates a new Product object from parameters that are user inputs
+     * from the Add Product form in addition to validating those inputs.
+     * @param string $name
+     * @param int $quantity
+     * @param float $price
+     * @return Product
+     */
+    public function createNewProduct(string $name, int $quantity, float $price) {
         $newProduct = new Product([
             'id' => $this->getNextProductId(),
             'name' => $name,
@@ -87,6 +97,12 @@ class ProductsTable extends Table
         return $newProduct;
     }
 
+    /**
+     * Inserts the values, from a provided Product object,
+     * into the database.
+     * @param \App\Model\Entity\Product $product
+     * @return void
+     */
     public function insertProduct(Product $product) {
         $this->getConnection()->insert($this->getTable(), [
             'name' => $product->getName(),
@@ -97,6 +113,12 @@ class ProductsTable extends Table
         ]);
     }
 
+    /**
+     * Updates the database with the provided Product object's
+     * properties.
+     * @param \App\Model\Entity\Product $product
+     * @return void
+     */
     public function updateProduct(Product $product) {
         $this->getConnection()->update(
             $this->getTable(), 
@@ -111,11 +133,17 @@ class ProductsTable extends Table
         );
     }
     
+    /**
+     * Marks the referenced product as deleted in the database
+     * without permanently deleting it.
+     * @param int $id
+     * @return void
+     */
     public function softDeleteProduct(int $id) {
-        $this->sqlQuery(
-            "UPDATE products
-                SET IsDeleted = True
-            WHERE ID = $id"
+        $this->getConnection()->update(
+            $this->getTable(), 
+            ['isDeleted' => true],
+            ['id' => $id]
         );
     }
 }

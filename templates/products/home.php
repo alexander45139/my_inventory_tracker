@@ -78,10 +78,10 @@ $this->disableAutoLayout();
                 </div>
             <?= $this->Form->end() ?>
             <?php if (isset($searchKeywords) && $searchKeywords !== ''): ?>
-                <h2>Search for '<?= $searchKeywords ?>'</h2>
+                <h3>Search for '<?= $searchKeywords ?>'</h3>
             <?php endif ?>
             <?php if (isset($filterStatus) && $filterStatus !== 'All'): ?>
-                <h2>Filtered for '<?= $filterStatus ?>'</h2>
+                <h3>Filtered for '<?= $filterStatus ?>'</h3>
             <?php endif ?>
             <div class="content">
                 <div class="row">
@@ -139,6 +139,11 @@ $this->disableAutoLayout();
                     </div>
                 </div>
                 <?php endforeach ?>
+                <div class="pagination">
+                    <?= $this->Paginator->prev(); ?>
+                    <?= $this->Paginator->counter(); ?>
+                    <?= $this->Paginator->next(); ?>
+                </div>
             </div>
         </div>
     </main>

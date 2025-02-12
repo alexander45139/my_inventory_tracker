@@ -38,16 +38,6 @@ class Product extends Entity
         $this->setLastUpdated($properties['lastUpdated']);
     }
 
-    /* public function __construct($id, $name, $quantity, $price, $isDeleted, $lastUpdated)
-    {
-        $this->id = $id;
-        $this->setName($name);
-        $this->setQuantity($quantity);
-        $this->setPrice($price);
-        $this->setIsDeleted($isDeleted);
-        $this->setLastUpdated($lastUpdated);
-    } */
-
     public function getId()
     {
         return $this->id;

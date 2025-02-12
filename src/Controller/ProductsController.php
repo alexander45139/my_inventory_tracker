@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Cake\DataSource\Paginator;
+
 /**
  * The ProductsController class changes the Product objects
  */
@@ -10,25 +12,26 @@ class ProductsController extends PagesController
 {
     private string $homePage = '/products/home';
     private string $productFormPage = '/products/product_form';
+    private int $productItemsLimitPerPage = 5;
 
     public function initialize(): void
     {
         parent::initialize();
 
-        $productsToDisplay = $this->Products->getProducts();
+        $productsQuery = $this->Products->getProductsQuery();
 
-        /* $this->paginate($this->Products->find(), [
-            'limit' => 5,
+        $paginatedProducts = $this->paginate($productsQuery, [
+            'limit' => $this->productItemsLimitPerPage,
             'page' => 1
-        ]); */
+        ]);
 
-        $this->set('products', $productsToDisplay);
+        $this->set('products', $paginatedProducts);
     }
 
-
-
     /**
-     * Initial method of the 'product_form.php'
+     * Initial method of the 'product_form.php' that works out whether the form
+     * is adding a new product or an edit of an existing product and sends that
+     * data to the view.
      * @param int $id
      * @return void
      */
@@ -51,9 +54,14 @@ class ProductsController extends PagesController
         $filterStatus = $this->request->getQuery('status');
 
         if ($searchKeywords !== '' || $filterStatus !== 'All') {
-            $productsToDisplay = $this->Products->getProducts($searchKeywords, $filterStatus);
+            $productsQuery = $this->Products->getProductsQuery($searchKeywords, $filterStatus);
 
-            $this->set('products', $productsToDisplay);
+            $paginatedProducts = $this->paginate($productsQuery, [
+                'limit' => $this->productItemsLimitPerPage,
+                'page' => 1
+            ]);
+
+            $this->set('products', $paginatedProducts);
             $this->set('searchKeywords', $searchKeywords);
             $this->set('filterStatus', $filterStatus);
             
@@ -72,8 +80,8 @@ class ProductsController extends PagesController
 
         $product = $this->Products->createNewProduct(
             $data['name'], 
-            $data['quantity'], 
-            $data['price']
+            (int) $data['quantity'], 
+            (float) $data['price']
         );
 
         if ($product->hasErrors()) {
@@ -89,7 +97,8 @@ class ProductsController extends PagesController
     }
 
     /**
-     * Changes a property's value of a Product object
+     * Updates a Product object with the user's submitted form
+     * inputs.
      * @param int $id
      * @return void
      */
