@@ -16,7 +16,7 @@ class ProductsController extends PagesController
     {
         parent::initialize();
 
-        $this->home();
+        $this->renderHome();
     }
 
     /**
@@ -25,7 +25,7 @@ class ProductsController extends PagesController
      * @param string $filterStatus - stock status selected by the user to filter the products
      * @return void
      */
-    public function home(string $searchKeywords = null, string $filterStatus = null): void
+    public function renderHome(string $searchKeywords = null, string $filterStatus = null): void
     {
         $productsQuery = $this->Products->getProductsQuery($searchKeywords, $filterStatus);
 
@@ -67,7 +67,7 @@ class ProductsController extends PagesController
         $filterStatus = $this->request->getQuery('status');
 
         if ($searchKeywords !== '' || $filterStatus !== 'All') {
-            $this->home($searchKeywords, $filterStatus);
+            $this->renderHome($searchKeywords, $filterStatus);
         } else {
             $this->redirect($this->homePage);
         }

@@ -61,6 +61,7 @@ return function (RouteBuilder $routes): void {
          * ...and connect the rest of 'Products' controller's URLs.
          */
         $builder->connect('/products/home', 'Products::display');
+        $builder->connect('/products/renderHome', 'Products::renderHome');
         $builder->connect('/products/addProduct', 'Products::addProduct');
 
         /*
