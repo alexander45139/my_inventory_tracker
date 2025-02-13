@@ -19,9 +19,15 @@ class ProductsController extends PagesController
         $this->home();
     }
 
-    public function home(): void
+    /**
+     * When entering the home page, the non-deleted products are paginated and displayed.
+     * @param string $searchKeywords - keywords entered by the user in the search bar to filter the products
+     * @param string $filterStatus - stock status selected by the user to filter the products
+     * @return void
+     */
+    public function home(string $searchKeywords = null, string $filterStatus = null): void
     {
-        $productsQuery = $this->Products->getProductsQuery();
+        $productsQuery = $this->Products->getProductsQuery($searchKeywords, $filterStatus);
 
         $paginatedProducts = $this->paginate($productsQuery, [
             'limit' => $this->productItemsLimitPerPage,
@@ -29,6 +35,10 @@ class ProductsController extends PagesController
         ]);
 
         $this->set('products', $paginatedProducts);
+        $this->set('searchKeywords', $searchKeywords);
+        $this->set('filterStatus', $filterStatus);
+        
+        $this->render($this->homePage);
     }
 
     /**
@@ -57,18 +67,7 @@ class ProductsController extends PagesController
         $filterStatus = $this->request->getQuery('status');
 
         if ($searchKeywords !== '' || $filterStatus !== 'All') {
-            $productsQuery = $this->Products->getProductsQuery($searchKeywords, $filterStatus);
-
-            $paginatedProducts = $this->paginate($productsQuery, [
-                'limit' => $this->productItemsLimitPerPage,
-                'page' => 1
-            ]);
-
-            $this->set('products', $paginatedProducts);
-            $this->set('searchKeywords', $searchKeywords);
-            $this->set('filterStatus', $filterStatus);
-            
-            $this->render($this->homePage);
+            $this->home($searchKeywords, $filterStatus);
         } else {
             $this->redirect($this->homePage);
         }
