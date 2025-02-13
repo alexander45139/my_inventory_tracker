@@ -49,6 +49,7 @@ $this->disableAutoLayout();
             <div class="text-center">
                 <?= $this->Html->link('Add Product', ['action' => 'product_form']) ?>
             </div>
+
             <?= $this->Form->create(null, [
                 'type' => 'get',
                 'url' => ['action' => 'search']
@@ -77,12 +78,14 @@ $this->disableAutoLayout();
                     </div>
                 </div>
             <?= $this->Form->end() ?>
+
             <?php if (isset($searchKeywords) && $searchKeywords !== ''): ?>
                 <h3>Search for '<?= $searchKeywords ?>'</h3>
             <?php endif ?>
             <?php if (isset($filterStatus) && $filterStatus !== 'All'): ?>
                 <h3>Filtered for '<?= $filterStatus ?>'</h3>
             <?php endif ?>
+
             <div class="content">
                 <div class="row">
                     <strong class="column">
@@ -139,6 +142,7 @@ $this->disableAutoLayout();
                     </div>
                 </div>
                 <?php endforeach ?>
+                
                 <div class="pagination">
                     <?= $this->Paginator->prev(); ?>
                     <?= $this->Paginator->counter(); ?>

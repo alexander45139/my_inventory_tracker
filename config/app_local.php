@@ -65,10 +65,10 @@ return [
          */
         'test' => [
             'host' => 'localhost',
-            //'port' => 'non_standard_port_number',
-            'username' => 'my_app',
-            'password' => 'secret',
-            'database' => 'test_myapp',
+            'port' => 3306,
+            'username' => 'root',
+            'password' => '',
+            'database' => 'cakephp_inventory_products_test',
             //'schema' => 'myapp',
             'url' => env('DATABASE_TEST_URL', 'sqlite://127.0.0.1/tmp/tests.sqlite'),
         ],

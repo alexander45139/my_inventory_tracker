@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use Cake\DataSource\Paginator;
-
 /**
  * The ProductsController class changes the Product objects
  */
@@ -18,6 +16,11 @@ class ProductsController extends PagesController
     {
         parent::initialize();
 
+        $this->home();
+    }
+
+    public function home(): void
+    {
         $productsQuery = $this->Products->getProductsQuery();
 
         $paginatedProducts = $this->paginate($productsQuery, [
