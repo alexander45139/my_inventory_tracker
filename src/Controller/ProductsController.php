@@ -54,6 +54,8 @@ class ProductsController extends PagesController
 
         $this->set('formType', ($id === null) ? 'add' : 'edit');
         $this->set('product', $product);
+
+        $this->render($this->productFormPage);
     }
 
     /**

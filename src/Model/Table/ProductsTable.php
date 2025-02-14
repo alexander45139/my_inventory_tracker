@@ -8,6 +8,7 @@ use Cake\Datasource\ConnectionInterface;
 use Cake\ORM\Table;
 use Cake\I18n\DateTime;
 use Cake\Datasource\ConnectionManager;
+use Cake\Database\Query\SelectQuery;
 
 class ProductsTable extends Table
 {
@@ -27,7 +28,7 @@ class ProductsTable extends Table
      * @param string $status - if provided, it fetches all products filtered by the provided status
      * @return array
      */
-    public function getProductsQuery(string $name = null, string $status = null)
+    public function getProductsQuery(string $name = null, string $status = null): SelectQuery
     {
         $conditions = ['isDeleted' => False];
 
