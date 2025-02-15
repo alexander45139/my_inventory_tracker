@@ -81,6 +81,10 @@ class ProductsTableTest extends TestCase
         $this->assertNotEmpty($products);
     }
     
+    /**
+     * Test for getProductById method
+     * @return void
+     */
     public function testGetProductById()
     {
         $product = $this->Products->getProductById(1);
@@ -88,12 +92,20 @@ class ProductsTableTest extends TestCase
         $this->assertEquals(1, $product->getId());
     }
 
+    /**
+     * Test for getNextProductId method
+     * @return void
+     */
     public function testGetNextProductId()
     {
         $productId = $this->Products->getNextProductId();
         $this->assertIsInt($productId);
     }
 
+    /**
+     * Test for updateProduct method
+     * @return void
+     */
     public function testUpdateProduct()
     {
         $product = $this->Products->getProductById(1);
@@ -111,6 +123,10 @@ class ProductsTableTest extends TestCase
         $this->assertEquals($price, $product->getPrice());
     }
 
+    /**
+     * Test for softDeleteProduct method
+     * @return void
+     */
     public function testSoftDeleteProduct()
     {
         $this->Products->softDeleteProduct(1);
